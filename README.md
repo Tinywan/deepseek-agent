@@ -13,8 +13,8 @@ composer require deepseek/agent
 ## Quick Start
 
 ```php
-use DeepSeek\Wan\Config;
-use function DeepSeek\Wan\generateText;
+use DeepSeek\Agent\Config;
+use function DeepSeek\Agent\generateText;
 
 $config = new Config([
     'apiKey' => getenv('DEEPSEEK_API_KEY'),
@@ -36,14 +36,14 @@ echo $result->usage['total_tokens'];    // Token usage
 ### Streaming
 
 ```php
-use function DeepSeek\Wan\generateStream;
+use function DeepSeek\Agent\generateStream;
 
 $stream = generateStream($config, [
     'messages' => [['role' => 'user', 'content' => 'Tell me a story.']],
 ]);
 
 foreach ($stream as $event) {
-    if ($event instanceof \DeepSeek\Wan\TextDeltaEvent) {
+    if ($event instanceof \DeepSeek\Agent\TextDeltaEvent) {
         echo $event->delta;  // Output word by word
     }
 }
@@ -54,9 +54,9 @@ Five event types: `TextDeltaEvent`, `ReasoningDeltaEvent`, `ToolCallEvent`, `Ste
 ### Tool Calling
 
 ```php
-use function DeepSeek\Wan\createAgent;
-use function DeepSeek\Wan\createTool;
-use DeepSeek\Wan\Schema;
+use function DeepSeek\Agent\createAgent;
+use function DeepSeek\Agent\createTool;
+use DeepSeek\Agent\Schema;
 
 $weatherTool = createTool(
     name: 'get_weather',
@@ -84,8 +84,8 @@ $result = $agent->generate([
 ### Structured Output
 
 ```php
-use DeepSeek\Wan\Schema;
-use function DeepSeek\Wan\createAgent;
+use DeepSeek\Agent\Schema;
+use function DeepSeek\Agent\createAgent;
 
 $reviewSchema = Schema::object([
     'title'  => Schema::string()->describe('Book title')->required(),
@@ -108,7 +108,7 @@ Schema Builder supports: `string()`, `number()`, `integer()`, `boolean()`, `obje
 ### FIM (Fill-in-the-Middle)
 
 ```php
-use function DeepSeek\Wan\generateFim;
+use function DeepSeek\Agent\generateFim;
 
 $result = generateFim($config, [
     'prompt' => "def fibonacci(n):\n    \"\"\"Return the nth Fibonacci number.\"\"\"\n",
@@ -122,7 +122,7 @@ echo $result['choices'][0]['text']; // Completed code
 ### Model List & Balance
 
 ```php
-$model = new DeepSeek\Wan\Model($config);
+$model = new DeepSeek\Agent\Model($config);
 $models = $model->list();      // GET /models
 $balance = $model->balance();  // GET /user/balance
 ```
@@ -130,7 +130,7 @@ $balance = $model->balance();  // GET /user/balance
 ### Hook Lifecycle
 
 ```php
-$hooks = new DeepSeek\Wan\Hooks();
+$hooks = new DeepSeek\Agent\Hooks();
 
 $hooks->beforeStep(function (HookContext $ctx) {
     return ['config' => ['temperature' => 0.5]]; // Adjust params before each step
@@ -150,7 +150,7 @@ $agent = createAgent($config, hooks: $hooks);
 ## Configuration
 
 ```php
-$config = new DeepSeek\Wan\Config([
+$config = new DeepSeek\Agent\Config([
     'apiKey'      => 'sk-xxx',                     // Required
     'model'       => 'deepseek-chat',              // Default
     'baseUrl'     => 'https://api.deepseek.com',   // Default

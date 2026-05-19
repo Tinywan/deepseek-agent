@@ -13,8 +13,8 @@ composer require deepseek/agent
 ## 快速开始
 
 ```php
-use DeepSeek\Wan\Config;
-use function DeepSeek\Wan\generateText;
+use DeepSeek\Agent\Config;
+use function DeepSeek\Agent\generateText;
 
 $config = new Config([
     'apiKey' => getenv('DEEPSEEK_API_KEY'),
@@ -36,14 +36,14 @@ echo $result->usage['total_tokens'];    // Token 用量
 ### 流式输出
 
 ```php
-use function DeepSeek\Wan\generateStream;
+use function DeepSeek\Agent\generateStream;
 
 $stream = generateStream($config, [
     'messages' => [['role' => 'user', 'content' => '讲个故事']],
 ]);
 
 foreach ($stream as $event) {
-    if ($event instanceof \DeepSeek\Wan\TextDeltaEvent) {
+    if ($event instanceof \DeepSeek\Agent\TextDeltaEvent) {
         echo $event->delta;  // 逐字输出
     }
 }
@@ -54,9 +54,9 @@ foreach ($stream as $event) {
 ### 工具调用
 
 ```php
-use function DeepSeek\Wan\createAgent;
-use function DeepSeek\Wan\createTool;
-use DeepSeek\Wan\Schema;
+use function DeepSeek\Agent\createAgent;
+use function DeepSeek\Agent\createTool;
+use DeepSeek\Agent\Schema;
 
 $weatherTool = createTool(
     name: 'get_weather',
@@ -84,8 +84,8 @@ $result = $agent->generate([
 ### 结构化输出
 
 ```php
-use DeepSeek\Wan\Schema;
-use function DeepSeek\Wan\createAgent;
+use DeepSeek\Agent\Schema;
+use function DeepSeek\Agent\createAgent;
 
 $reviewSchema = Schema::object([
     'title'  => Schema::string()->describe('书名')->required(),
@@ -108,7 +108,7 @@ Schema Builder 支持：`string()`、`number()`、`integer()`、`boolean()`、`o
 ### FIM 代码补全
 
 ```php
-use function DeepSeek\Wan\generateFim;
+use function DeepSeek\Agent\generateFim;
 
 $result = generateFim($config, [
     'prompt' => "def fibonacci(n):\n    \"\"\"Return the nth Fibonacci number.\"\"\"\n",
@@ -122,7 +122,7 @@ echo $result['choices'][0]['text']; // 模型补全的代码
 ### 模型列表 & 余额
 
 ```php
-$model = new DeepSeek\Wan\Model($config);
+$model = new DeepSeek\Agent\Model($config);
 $models = $model->list();      // GET /models
 $balance = $model->balance();  // GET /user/balance
 ```
@@ -130,7 +130,7 @@ $balance = $model->balance();  // GET /user/balance
 ### Hook 生命周期
 
 ```php
-$hooks = new DeepSeek\Wan\Hooks();
+$hooks = new DeepSeek\Agent\Hooks();
 
 $hooks->beforeStep(function (HookContext $ctx) {
     return ['config' => ['temperature' => 0.5]]; // 每步前调整参数
@@ -150,7 +150,7 @@ $agent = createAgent($config, hooks: $hooks);
 ## 配置项
 
 ```php
-$config = new DeepSeek\Wan\Config([
+$config = new DeepSeek\Agent\Config([
     'apiKey'      => 'sk-xxx',                     // 必填
     'model'       => 'deepseek-chat',              // 默认
     'baseUrl'     => 'https://api.deepseek.com',   // 默认
