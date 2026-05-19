@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use DeepSeek\Wan\Config;
@@ -13,7 +15,7 @@ $config = new Config([
 $result = generateText($config, [
     'messages' => [
         ['role' => 'system', 'content' => 'You are a helpful assistant.'],
-        ['role' => 'user', 'content' => 'Hello, how are you?'],
+        ['role' => 'user', 'content' => '你好！介绍一下你自己'],
     ],
 ]);
 

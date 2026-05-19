@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DeepSeek\Wan\Exceptions;
 
 class ToolExecutionException extends DeepSeekException
