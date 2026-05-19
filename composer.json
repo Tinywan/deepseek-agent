@@ -18,5 +18,13 @@
         {
             "name": "Tinywan"
         }
-    ]
+    ],
+    "require-dev": {
+        "pestphp/pest": "^4.7"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
 }
