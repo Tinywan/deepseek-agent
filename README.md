@@ -1,14 +1,16 @@
 # deepseek-wan
 
-PHP Agent 框架，封装 DeepSeek API 全部能力：文本生成、流式输出、工具调用、结构化输出、FIM 代码补全。
+PHP Agent framework for the DeepSeek API — text generation, streaming, tool calling, structured output, and FIM completion.
 
-## 安装
+> [中文文档](README_CN.md)
+
+## Installation
 
 ```bash
 composer require deepseek/wan
 ```
 
-## 快速开始
+## Quick Start
 
 ```php
 use DeepSeek\Wan\Config;
@@ -21,35 +23,35 @@ $config = new Config([
 
 $result = generateText($config, [
     'messages' => [
-        ['role' => 'user', 'content' => '你好，请介绍一下你自己。'],
+        ['role' => 'user', 'content' => 'Hello, tell me about yourself.'],
     ],
 ]);
 
-echo $result->text;       // 模型回复内容
-echo $result->usage['total_tokens']; // Token 用量
+echo $result->text;                     // Model response
+echo $result->usage['total_tokens'];    // Token usage
 ```
 
-## 功能
+## Features
 
-### 流式输出
+### Streaming
 
 ```php
 use function DeepSeek\Wan\generateStream;
 
 $stream = generateStream($config, [
-    'messages' => [['role' => 'user', 'content' => '讲个故事']],
+    'messages' => [['role' => 'user', 'content' => 'Tell me a story.']],
 ]);
 
 foreach ($stream as $event) {
     if ($event instanceof \DeepSeek\Wan\TextDeltaEvent) {
-        echo $event->delta;  // 逐字输出
+        echo $event->delta;  // Output word by word
     }
 }
 ```
 
-支持五种事件类型：`TextDeltaEvent`、`ReasoningDeltaEvent`、`ToolCallEvent`、`StepEvent`、`FinishEvent`。
+Five event types: `TextDeltaEvent`, `ReasoningDeltaEvent`, `ToolCallEvent`, `StepEvent`, `FinishEvent`.
 
-### 工具调用
+### Tool Calling
 
 ```php
 use function DeepSeek\Wan\createAgent;
@@ -58,53 +60,52 @@ use DeepSeek\Wan\Schema;
 
 $weatherTool = createTool(
     name: 'get_weather',
-    description: '查询指定城市的天气',
+    description: 'Get the current weather for a given city.',
     schema: Schema::object([
-        'city' => Schema::string()->describe('城市名称')->required(),
+        'city' => Schema::string()->describe('City name')->required(),
     ]),
     execute: function (array $args): string {
-        return json_encode(['city' => $args['city'], 'temp' => 22, 'condition' => '晴']);
+        return json_encode(['city' => $args['city'], 'temp' => 22, 'condition' => 'sunny']);
     },
-    retries: 2,    // 失败重试次数
-    timeout: 30000, // 超时（毫秒）
+    retries: 2,      // Retry on failure
+    timeout: 30000,  // Timeout in milliseconds
 );
 
 $agent = createAgent($config, tools: [$weatherTool]);
 
 $result = $agent->generate([
-    ['role' => 'user', 'content' => '北京今天天气怎么样？'],
+    ['role' => 'user', 'content' => "What's the weather like in Beijing today?"],
 ]);
 ```
 
-- 自动工具调用循环：检测 `tool_calls` → 执行工具 → 追加结果 → 继续请求
-- 指数退避重试：`delay = min(100 * 2^attempt + random(0,100), 10000)` ms
+- Automatic tool-call loop: detect `tool_calls` → execute → append result → continue
+- Exponential backoff with jitter: `delay = min(100 * 2^attempt + random(0,100), 10000)` ms
 
-### 结构化输出
+### Structured Output
 
 ```php
 use DeepSeek\Wan\Schema;
 use function DeepSeek\Wan\createAgent;
 
 $reviewSchema = Schema::object([
-    'title'  => Schema::string()->describe('书名')->required(),
-    'author' => Schema::string()->describe('作者')->required(),
-    'rating' => Schema::number()->describe('评分 1.0-5.0')->required(),
-    'genres' => Schema::array(Schema::string())->describe('类型'),
+    'title'  => Schema::string()->describe('Book title')->required(),
+    'author' => Schema::string()->describe('Author name')->required(),
+    'rating' => Schema::number()->describe('Rating 1.0-5.0')->required(),
+    'genres' => Schema::array(Schema::string())->describe('Genres'),
 ]);
 
 $agent = createAgent($config, output: $reviewSchema);
 
 $result = $agent->generate([
-    ['role' => 'user', 'content' => '推荐《三体》并写一段书评'],
+    ['role' => 'user', 'content' => 'Write a review of "The Three-Body Problem" by Liu Cixin.'],
 ]);
 
 $review = json_decode($result->text, true);
-// $review['title'], $review['author'], $review['rating'], ...
 ```
 
-Schema Builder 支持：`string()`、`number()`、`integer()`、`boolean()`、`object([])`、`array()`、`enum([])`，以及 `describe()`、`required()` 链式调用。
+Schema Builder supports: `string()`, `number()`, `integer()`, `boolean()`, `object([])`, `array()`, `enum([])`, with chainable `describe()` and `required()`.
 
-### FIM 代码补全
+### FIM (Fill-in-the-Middle)
 
 ```php
 use function DeepSeek\Wan\generateFim;
@@ -115,10 +116,10 @@ $result = generateFim($config, [
     'max_tokens' => 256,
 ]);
 
-echo $result['choices'][0]['text']; // 模型补全的代码
+echo $result['choices'][0]['text']; // Completed code
 ```
 
-### 模型列表 & 余额
+### Model List & Balance
 
 ```php
 $model = new DeepSeek\Wan\Model($config);
@@ -126,13 +127,13 @@ $models = $model->list();      // GET /models
 $balance = $model->balance();  // GET /user/balance
 ```
 
-### Hook 生命周期
+### Hook Lifecycle
 
 ```php
 $hooks = new DeepSeek\Wan\Hooks();
 
 $hooks->beforeStep(function (HookContext $ctx) {
-    return ['config' => ['temperature' => 0.5]]; // 每步前调整参数
+    return ['config' => ['temperature' => 0.5]]; // Adjust params before each step
 });
 
 $hooks->afterStep(function (StepResult $result) {
@@ -140,43 +141,43 @@ $hooks->afterStep(function (StepResult $result) {
 });
 
 $hooks->onError(function (HookError $error) {
-    return 'handled'; // 返回字符串则作为错误信息抛出
+    return 'handled'; // Return string to use as error message
 });
 
 $agent = createAgent($config, hooks: $hooks);
 ```
 
-## 配置项
+## Configuration
 
 ```php
 $config = new DeepSeek\Wan\Config([
-    'apiKey'      => 'sk-xxx',                     // 必填
-    'model'       => 'deepseek-chat',              // 默认
-    'baseUrl'     => 'https://api.deepseek.com',   // 默认
-    'temperature' => 1.0,                          // 默认，范围 0-2
-    'maxTokens'   => 2048,                         // 默认
+    'apiKey'      => 'sk-xxx',                     // Required
+    'model'       => 'deepseek-chat',              // Default
+    'baseUrl'     => 'https://api.deepseek.com',   // Default
+    'temperature' => 1.0,                          // Default, range 0-2
+    'maxTokens'   => 2048,                         // Default
 ]);
 
-// 不可变继承覆盖
+// Immutable config with inheritance
 $newConfig = $config->withConfig(['model' => 'deepseek-reasoner']);
 ```
 
-## 架构
+## Architecture
 
-三层设计，按需选择抽象层级：
+Three-layer design — pick the right abstraction for your use case:
 
 ```
-Client 层      Chat / Fim / Model       → 直接 HTTP 调用
-Generation 层  TextGenerator / StreamGenerator → 工具循环 + Hook + 事件
-Agent 层       Agent                    → 绑定 config + tools + output
+Client layer    Chat / Fim / Model              → Direct HTTP calls
+Generation layer  TextGenerator / StreamGenerator → Tool loop + Hooks + Events
+Agent layer     Agent                           → Bundled config + tools + output
 ```
 
-## 要求
+## Requirements
 
 - PHP >= 8.1
 - Composer
-- webman/openai ^3.0（自动依赖 workerman 运行时）
+- webman/openai ^3.0 (auto-installs workerman runtime)
 
 ## License
 
-Apache 2.0 — 见 [LICENSE](LICENSE)。
+Apache 2.0 — see [LICENSE](LICENSE).
