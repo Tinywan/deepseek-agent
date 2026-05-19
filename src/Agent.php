@@ -32,6 +32,8 @@ class Agent
     /** @param array<int, array{role: string, content: string}> $messages */
     public function generate(array $messages): GenerateTextResult
     {
+        $params = $this->buildParams($messages);
+
         $generator = new TextGenerator(
             config: $this->config,
             hooks: $this->hooks,
@@ -39,24 +41,14 @@ class Agent
             maxSteps: $this->maxSteps,
         );
 
-        $params = ['messages' => $messages];
-
-        if ($this->outputSchema) {
-            $params['response_format'] = [
-                'type'       => 'json_schema',
-                'json_schema' => [
-                    'name'   => 'output',
-                    'schema' => $this->outputSchema->toArray(),
-                ],
-            ];
-        }
-
         return $generator->generate($params);
     }
 
     /** @param array<int, array{role: string, content: string}> $messages */
     public function stream(array $messages): \Generator
     {
+        $params = $this->buildParams($messages);
+
         $generator = new StreamGenerator(
             config: $this->config,
             hooks: $this->hooks,
@@ -64,19 +56,40 @@ class Agent
             maxSteps: $this->maxSteps,
         );
 
-        $params = ['messages' => $messages];
+        yield from $generator->generateStream($params);
+    }
 
+    private function buildParams(array $messages): array
+    {
         if ($this->outputSchema) {
-            $params['response_format'] = [
-                'type'       => 'json_schema',
-                'json_schema' => [
-                    'name'   => 'output',
-                    'schema' => $this->outputSchema->toArray(),
-                ],
+            $schemaJson = json_encode(
+                $this->outputSchema->toArray(),
+                JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT
+            );
+            $systemMsg = "You must respond with valid JSON that conforms to this JSON Schema:\n{$schemaJson}\n\nOutput only the JSON object, no markdown or other text.";
+
+            // Prepend system message if none exists, or augment existing one
+            $hasSystem = false;
+            foreach ($messages as $i => &$msg) {
+                if (($msg['role'] ?? '') === 'system') {
+                    $msg['content'] = $msg['content'] . "\n\n" . $systemMsg;
+                    $hasSystem = true;
+                    break;
+                }
+            }
+            unset($msg);
+
+            if (!$hasSystem) {
+                array_unshift($messages, ['role' => 'system', 'content' => $systemMsg]);
+            }
+
+            return [
+                'messages'         => $messages,
+                'response_format'  => ['type' => 'json_object'],
             ];
         }
 
-        yield from $generator->generateStream($params);
+        return ['messages' => $messages];
     }
 
     public function hooks(): Hooks

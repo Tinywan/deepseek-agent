@@ -3,18 +3,14 @@
 namespace DeepSeek\Wan;
 
 use DeepSeek\Wan\Exceptions\DeepSeekException;
-use Webman\Openai\Chat as OpenaiChat;
 
 class Chat
 {
-    private OpenaiChat $client;
+    private HttpClient $http;
 
     public function __construct(private readonly Config $config)
     {
-        $this->client = new OpenaiChat([
-            'apiKey'  => $config->apiKey,
-            'baseUrl' => $config->baseUrl,
-        ]);
+        $this->http = new HttpClient($config);
     }
 
     public function completions(array $params): array
@@ -22,7 +18,7 @@ class Chat
         $params = $this->mergeDefaults($params);
 
         try {
-            return $this->client->completions($params);
+            return $this->http->request('POST', '/chat/completions', $params);
         } catch (\Throwable $e) {
             throw new DeepSeekException(
                 'Chat completion failed: ' . $e->getMessage(),
@@ -38,7 +34,7 @@ class Chat
         $params['stream'] = true;
 
         try {
-            yield from $this->client->completionsStream($params);
+            yield from $this->http->streamRequest('POST', '/chat/completions', $params);
         } catch (\Throwable $e) {
             throw new DeepSeekException(
                 'Chat streaming failed: ' . $e->getMessage(),
