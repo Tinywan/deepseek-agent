@@ -174,9 +174,8 @@ Agent 层       Agent                    → 绑定 config + tools + output
 
 ## 要求
 
-- PHP >= 8.1
+- PHP >= 8.1，需启用 curl 扩展
 - Composer
-- webman/openai ^3.0（自动依赖 workerman 运行时）
 
 ## License
 

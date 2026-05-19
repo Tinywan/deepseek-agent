@@ -174,9 +174,8 @@ Agent layer     Agent                           → Bundled config + tools + out
 
 ## Requirements
 
-- PHP >= 8.1
+- PHP >= 8.1 with curl extension
 - Composer
-- webman/openai ^3.0 (auto-installs workerman runtime)
 
 ## License
 

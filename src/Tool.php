@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace DeepSeek\Agent;
 
-class Tool
+readonly class Tool
 {
     public function __construct(
-        public readonly string $name,
-        public readonly string $description,
-        public readonly array|Schema $schema,
-        public readonly \Closure $execute,
-        public readonly int $timeout = 30000,
-        public readonly int $retries = 0,
-        public readonly bool $strict = false,
-        public readonly bool $required = false,
+        public string       $name,
+        public string       $description,
+        public array|Schema $schema,
+        public \Closure     $execute,
+        public int          $timeout = 30000,
+        public int          $retries = 0,
+        public bool         $strict = false,
+        public bool         $required = false,
     ) {}
 
     public function toArray(): array
