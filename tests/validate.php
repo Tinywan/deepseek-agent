@@ -4,37 +4,37 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use DeepSeek\Wan\Agent;
-use DeepSeek\Wan\Chat;
-use DeepSeek\Wan\Config;
-use DeepSeek\Wan\Fim;
-use DeepSeek\Wan\Hooks;
-use DeepSeek\Wan\Model;
-use DeepSeek\Wan\Schema;
-use DeepSeek\Wan\StreamGenerator;
-use DeepSeek\Wan\StreamEventType;
-use DeepSeek\Wan\TextGenerator;
-use DeepSeek\Wan\Tool;
-use DeepSeek\Wan\ToolCaller;
-use DeepSeek\Wan\TextDeltaEvent;
-use DeepSeek\Wan\ReasoningDeltaEvent;
-use DeepSeek\Wan\ToolCallEvent;
-use DeepSeek\Wan\StepEvent;
-use DeepSeek\Wan\FinishEvent;
-use DeepSeek\Wan\HookContext;
-use DeepSeek\Wan\StepResult;
-use DeepSeek\Wan\HookError;
-use DeepSeek\Wan\GenerateTextResult;
-use DeepSeek\Wan\Exceptions\DeepSeekException;
-use DeepSeek\Wan\Exceptions\InvalidConfigException;
-use DeepSeek\Wan\Exceptions\MaxStepsExceededException;
-use DeepSeek\Wan\Exceptions\ToolExecutionException;
-use DeepSeek\Wan\Exceptions\ToolTimeoutException;
-use function DeepSeek\Wan\generateText;
-use function DeepSeek\Wan\generateStream;
-use function DeepSeek\Wan\createAgent;
-use function DeepSeek\Wan\createTool;
-use function DeepSeek\Wan\generateFim;
+use DeepSeek\Agent\Agent;
+use DeepSeek\Agent\Chat;
+use DeepSeek\Agent\Config;
+use DeepSeek\Agent\Fim;
+use DeepSeek\Agent\Hooks;
+use DeepSeek\Agent\Model;
+use DeepSeek\Agent\Schema;
+use DeepSeek\Agent\StreamGenerator;
+use DeepSeek\Agent\StreamEventType;
+use DeepSeek\Agent\TextGenerator;
+use DeepSeek\Agent\Tool;
+use DeepSeek\Agent\ToolCaller;
+use DeepSeek\Agent\TextDeltaEvent;
+use DeepSeek\Agent\ReasoningDeltaEvent;
+use DeepSeek\Agent\ToolCallEvent;
+use DeepSeek\Agent\StepEvent;
+use DeepSeek\Agent\FinishEvent;
+use DeepSeek\Agent\HookContext;
+use DeepSeek\Agent\StepResult;
+use DeepSeek\Agent\HookError;
+use DeepSeek\Agent\GenerateTextResult;
+use DeepSeek\Agent\Exceptions\DeepSeekException;
+use DeepSeek\Agent\Exceptions\InvalidConfigException;
+use DeepSeek\Agent\Exceptions\MaxStepsExceededException;
+use DeepSeek\Agent\Exceptions\ToolExecutionException;
+use DeepSeek\Agent\Exceptions\ToolTimeoutException;
+use function DeepSeek\Agent\generateText;
+use function DeepSeek\Agent\generateStream;
+use function DeepSeek\Agent\createAgent;
+use function DeepSeek\Agent\createTool;
+use function DeepSeek\Agent\generateFim;
 
 $pass = 0;
 $fail = 0;
@@ -53,8 +53,8 @@ function check(string $label, bool $cond, string &$details = ''): void
 
 echo "=== 1. 项目搭建 ===\n";
 $composerJson = json_decode(file_get_contents(__DIR__ . '/../composer.json'), true);
-check("1.1 composer.json 包名 deepseek/wan", $composerJson['name'] === 'deepseek/wan');
-check("1.2 PSR-4 DeepSeek\\Wan\\ → src/", isset($composerJson['autoload']['psr-4']['DeepSeek\\Wan\\']));
+check("1.1 composer.json 包名 deepseek/agent", $composerJson['name'] === 'deepseek/agent');
+check("1.2 PSR-4 DeepSeek\\Agent\\ → src/", isset($composerJson['autoload']['psr-4']['DeepSeek\\Agent\\']));
 check("1.3 DeepSeekException 类", class_exists(DeepSeekException::class));
 
 echo "\n=== 2. 配置管理 ===\n";
@@ -262,14 +262,14 @@ try {
 } catch (DeepSeekException $e) {
     check("12.4 reasoner 禁用 JSON output", str_contains($e->getMessage(), 'structured JSON'));
 }
-check("12.5 createAgent() 工厂函数", function_exists('DeepSeek\\Wan\\createAgent'));
+check("12.5 createAgent() 工厂函数", function_exists('DeepSeek\\Agent\\createAgent'));
 
 echo "\n=== 13. 入口与门面 ===\n";
-check("13.1 generateText() 顶层函数", function_exists('DeepSeek\\Wan\\generateText'));
-check("13.1 generateStream() 顶层函数", function_exists('DeepSeek\\Wan\\generateStream'));
-check("13.1 createAgent() 顶层函数", function_exists('DeepSeek\\Wan\\createAgent'));
-check("13.1 createTool() 顶层函数", function_exists('DeepSeek\\Wan\\createTool'));
-check("13.1 generateFim() 顶层函数", function_exists('DeepSeek\\Wan\\generateFim'));
+check("13.1 generateText() 顶层函数", function_exists('DeepSeek\\Agent\\generateText'));
+check("13.1 generateStream() 顶层函数", function_exists('DeepSeek\\Agent\\generateStream'));
+check("13.1 createAgent() 顶层函数", function_exists('DeepSeek\\Agent\\createAgent'));
+check("13.1 createTool() 顶层函数", function_exists('DeepSeek\\Agent\\createTool'));
+check("13.1 generateFim() 顶层函数", function_exists('DeepSeek\\Agent\\generateFim'));
 check("13.2 autoload files 自动加载", true);
 
 echo "\n=== 14. 示例文件 ===\n";

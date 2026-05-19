@@ -1,5 +1,5 @@
 {
-    "name": "deepseek/wan",
+    "name": "deepseek/agent",
     "description": "PHP Agent framework for the DeepSeek API — text generation, streaming, tool calling, structured output, and FIM completion.",
     "type": "library",
     "license": "Apache-2.0",
@@ -9,7 +9,7 @@
     },
     "autoload": {
         "psr-4": {
-            "DeepSeek\\Wan\\": "src/"
+            "DeepSeek\\Agent\\": "src/"
         },
         "files": [
             "src/functions.php"

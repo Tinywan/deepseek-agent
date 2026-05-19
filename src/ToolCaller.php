@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace DeepSeek\Wan;
+namespace DeepSeek\Agent;
 
-use DeepSeek\Wan\Exceptions\ToolExecutionException;
-use DeepSeek\Wan\Exceptions\ToolTimeoutException;
+use DeepSeek\Agent\Exceptions\ToolExecutionException;
+use DeepSeek\Agent\Exceptions\ToolTimeoutException;
 
 class ToolCaller
 {

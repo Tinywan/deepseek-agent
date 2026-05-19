@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DeepSeek\Wan;
+namespace DeepSeek\Agent;
 
 readonly class ToolCallEvent
 {

@@ -1,4 +1,4 @@
-# deepseek-wan
+# deepseek-agent
 
 PHP Agent framework for the DeepSeek API — text generation, streaming, tool calling, structured output, and FIM completion.
 
@@ -7,7 +7,7 @@ PHP Agent framework for the DeepSeek API — text generation, streaming, tool ca
 ## Installation
 
 ```bash
-composer require deepseek/wan
+composer require deepseek/agent
 ```
 
 ## Quick Start

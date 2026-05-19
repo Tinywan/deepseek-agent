@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use DeepSeek\Wan\Config;
-use function DeepSeek\Wan\generateFim;
+use DeepSeek\Agent\Config;
+use function DeepSeek\Agent\generateFim;
 
 $config = new Config([
     'apiKey' => getenv('DEEPSEEK_API_KEY') ?: 'your-api-key',

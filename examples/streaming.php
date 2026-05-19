@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use DeepSeek\Wan\Config;
-use DeepSeek\Wan\StreamEventType;
-use function DeepSeek\Wan\generateStream;
+use DeepSeek\Agent\Config;
+use DeepSeek\Agent\StreamEventType;
+use function DeepSeek\Agent\generateStream;
 
 $config = new Config([
     'apiKey' => getenv('DEEPSEEK_API_KEY') ?: 'your-api-key',
@@ -22,10 +22,10 @@ $stream = generateStream($config, [
 $fullText = '';
 
 foreach ($stream as $event) {
-    if ($event instanceof \DeepSeek\Wan\TextDeltaEvent) {
+    if ($event instanceof \DeepSeek\Agent\TextDeltaEvent) {
         echo $event->delta;
         $fullText .= $event->delta;
-    } elseif ($event instanceof \DeepSeek\Wan\FinishEvent) {
+    } elseif ($event instanceof \DeepSeek\Agent\FinishEvent) {
         echo "\n\n---\n";
         echo "Tokens: " . json_encode($event->usage) . "\n";
     }

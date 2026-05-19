@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace DeepSeek\Wan;
+namespace DeepSeek\Agent;
 
-use DeepSeek\Wan\Exceptions\DeepSeekException;
-use DeepSeek\Wan\Exceptions\MaxStepsExceededException;
+use DeepSeek\Agent\Exceptions\DeepSeekException;
+use DeepSeek\Agent\Exceptions\MaxStepsExceededException;
 
 class TextGenerator
 {

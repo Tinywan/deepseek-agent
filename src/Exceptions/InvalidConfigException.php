@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DeepSeek\Wan\Exceptions;
+namespace DeepSeek\Agent\Exceptions;
 
 class InvalidConfigException extends DeepSeekException
 {

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace DeepSeek\Wan;
+namespace DeepSeek\Agent;
 
-use DeepSeek\Wan\Exceptions\InvalidConfigException;
+use DeepSeek\Agent\Exceptions\InvalidConfigException;
 
 final readonly class Config
 {

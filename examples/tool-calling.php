@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use DeepSeek\Wan\Config;
-use DeepSeek\Wan\Schema;
-use function DeepSeek\Wan\createAgent;
-use function DeepSeek\Wan\createTool;
+use DeepSeek\Agent\Config;
+use DeepSeek\Agent\Schema;
+use function DeepSeek\Agent\createAgent;
+use function DeepSeek\Agent\createTool;
 
 $config = new Config([
     'apiKey' => getenv('DEEPSEEK_API_KEY') ?: 'your-api-key',
